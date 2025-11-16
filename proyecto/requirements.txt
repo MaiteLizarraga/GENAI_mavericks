@@ -1,0 +1,6 @@
+SpeechRecognition
+PyAudio
+transformers
+typing_extensions
+langgraph
+torch @ https://download.pytorch.org/whl/cpu/torch-2.5.1%2Bcpu-cp312-cp312-win_amd64.whl
