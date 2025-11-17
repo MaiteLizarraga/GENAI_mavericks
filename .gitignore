@@ -6,6 +6,10 @@ Reto_2_Mavericks.pptx
 
 # Ignorar carpeta virtualenv
 sigp_env/
+venv/
 
 # Ignorar token Hugging Face
 .env
+
+# Ignorar pycache
+app/__pycache__/
