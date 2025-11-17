@@ -1,5 +1,4 @@
 from model_loader import model, tokenizer
-
 import re
 from datetime import datetime
 
@@ -47,6 +46,8 @@ def validar_con_modelo(slot, user_input):
         - Ejemplo válido: '31/12/2025'
         - Ejemplo NO válido: '31-12-2025', '2025/12/31'
         - Si el formato es incorrecto, devuelve 'INCOMPLETO'.
+        - La fecha debe ser válida, no hay más de 31 días en los meses, ni 12 meses en el año.
+        - La persona debe ser mayor de edad. Su edad no debe ser menor a 18 años restando a la fecha de hoy la fecha de nacimiento
         """
     elif slot["type"] == "boolean":
         prompt += """
@@ -54,6 +55,33 @@ def validar_con_modelo(slot, user_input):
         - Ejemplo válido: 'sí', 'no'
         - Ejemplo NO válido: 'tal vez', 'no sé'
         - Si no es claro, devuelve 'INCOMPLETO'.
+        """
+    elif slot["type"] == "telefono":
+        prompt += """
+        - Valida que la respuesta sea un número de teléfono válido siguiendo estas reglas:
+            1. Prefijo de 2 o 3 cifras:
+                - Fijo: empieza por 9
+                - Móvil: empieza por 6 o 7
+            2. Siguientes cifras: 7 o 6 dígitos para completar el número
+            3. El número total **no debe superar las 9 cifras**
+        - Ejemplo válido: '912345678' (fijo), '612345678' (móvil)
+        - Ejemplo NO válido: '512345678' (prefijo incorrecto)
+        - Ejemplo NO válido: '9123456789' (más de 9 cifras)
+        - Si cumple los criterios, devuelve el número tal cual.
+        - Si no cumple o es ambiguo, devuelve 'INCOMPLETO'.
+        """
+    elif slot["type"] == "email":
+        prompt += """
+        - Valida que la respuesta sea una dirección de correo electrónico válida:
+            1. Contiene exactamente un '@'.
+            2. Tiene al menos un carácter antes del '@'.
+            3. Después del '@', contiene al menos un punto '.' separando el dominio y el TLD.
+            4. Solo se permiten letras, números, guiones (-), guion bajo (_) y puntos (.) en el nombre y dominio.
+            5. No se permiten espacios.
+        - Ejemplo válido: 'usuario@example.com', 'nombre.apellido@empresa.es', 'mliztellez@gmail.co'
+        - Ejemplo NO válido: 'usuario@@example.com', 'usuario@', 'usuario example.com', 'm@g'
+        - Devuelve el email tal cual si cumple los criterios.
+        - Si no cumple o es ambiguo, devuelve 'INCOMPLETO'.
         """
     prompt += "\nDevuelve solo el valor limpio o 'INCOMPLETO'."
 
@@ -67,8 +95,6 @@ def validar_con_modelo(slot, user_input):
         output = model.generate(**inputs, max_new_tokens=50)
         raw_response = tokenizer.decode(output[0], skip_special_tokens=True).strip()
         last_response = raw_response.split("\n")[-1].strip()
-        print(raw_response)
-        print(last_response)
 
         # Validación estricta para nombre completo
         if slot["name"] == "nombre_completo":
@@ -107,15 +133,3 @@ def validar_con_modelo(slot, user_input):
     except Exception as e:
         print(f"Error al generar respuesta: {e}")
         return None
-
-
-
-
-
-
-def validar_con_pydantic(data_dict):
-    """
-    Valida el diccionario completo de slots con Pydantic.
-    Lanza excepción si hay error.
-    """
-    return ClienteHipoteca(**data_dict)

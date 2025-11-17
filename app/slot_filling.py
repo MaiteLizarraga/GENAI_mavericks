@@ -1,28 +1,6 @@
 import sqlite3
+from validations import validar_con_modelo
 from slot_loader import cargar_slots
-from validations import validar_con_modelo, validar_con_pydantic
-from schemas import (
-    ClienteBancoSlot, NombreCompletoSlot, DniNieSlot,
-    FechaNacimientoSlot, DireccionPostalSlot, TelefonoSlot,
-    EmailSlot, TipoViviendaSlot, NumerosSlot
-)
-from pydantic import ValidationError
-
-slot_models = {
-    "cliente_es_cliente_banco": ClienteBancoSlot,
-    "nombre_completo": NombreCompletoSlot,
-    "dni_nie": DniNieSlot,
-    "fecha_nacimiento": FechaNacimientoSlot,
-    "direccion_postal": DireccionPostalSlot,
-    "telefono": TelefonoSlot,
-    "email": EmailSlot,
-    "tipo_vivienda": TipoViviendaSlot,
-    "precio_vivienda": NumerosSlot,
-    "entrada": NumerosSlot,
-    "importe_a_financiar": NumerosSlot,
-    "ingresos_netos_mensuales": NumerosSlot,
-    "gastos_mensuales_est": NumerosSlot,
-}
 
 def iniciar_slot_filling_json(prompts):
     slots, _ = cargar_slots()
@@ -48,14 +26,6 @@ def iniciar_slot_filling_json(prompts):
             valor_limpio = validar_con_modelo(slot, user_input)
             if valor_limpio is None:
                 print(f"Agente: No entendí tu respuesta para {slot['name']}, inténtalo de nuevo.")
-                continue
-
-            # --- Validar solo este slot con Pydantic ---
-            ModelClass = slot_models.get(slot["name"])
-            try:
-                ModelClass(**{slot["name"]: valor_limpio})
-            except ValidationError as e:
-                print(f"Agente: La información no es válida: {e}. Intenta nuevamente.")
                 continue
 
             # --- Guardar dato y prompt ---

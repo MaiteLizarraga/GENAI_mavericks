@@ -9,6 +9,7 @@
       "name": "cliente_es_cliente_banco",
       "type": "boolean",
       "prompt": "¿Eres cliente del banco? (sí/no)",
+      "required": true,
       "validation": "is_bool"
     },
     {
@@ -34,14 +35,6 @@
       "required": true,
       "pre_fill_if_client_data": "birth_date",
       "validation": "adult_min_age:18"
-    },
-    {
-      "name": "direccion_postal",
-      "type": "string",
-      "prompt": "¿Cuál es tu dirección postal actual? Necesitaré la calle, el número, la ciudad y el código postal)",
-      "required": true,
-      "pre_fill_if_client_data": "address",
-      "validation": "min_length:10"
     },
     {
       "name": "telefono",
@@ -118,20 +111,6 @@
       "values": ["indefinido","temporal","autonomo","pensionista","desempleado"]
     }
   ],
-  "validation_functions": {
-    "is_bool": "value in [true,false,'sí','no','si']",
-    "min_length:3": "len(value.strip()) >= 3",
-    "dni_format": "regex match Spanish DNI/NIE patterns",
-    "adult_min_age:18": "date difference >= 18 years",
-    "phone_or_email": "basic phone or email pattern",
-    "positive_number": "value > 0",
-    "non_negative": "value >= 0",
-    "non_negative_and_less_than_price": "0 <= entrada < precio_vivienda",
-    "percent_or_none": "value is None or (0 <= value <= 100)",
-    "in_list:[10,15,20,25,30,35,40]": "value in [10,15,20,25,30,35,40]",
-    "must_be_true_for_credit_check": "value == true",
-    "must_be_true": "value == true"
-  },
   "flows": {
     "default": {
       "steps": [
