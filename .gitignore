@@ -1,0 +1,9 @@
+# Ignorar workspace de VS Code
+GENAI_mavericks.code-workspace
+
+# Ignorar presentación de PowerPoint
+Reto_2_Mavericks.pptx
+
+# Ignorar carpeta virtualenv
+sigp_env/
+

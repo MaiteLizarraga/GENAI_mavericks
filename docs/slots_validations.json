@@ -1,0 +1,191 @@
+{
+  "metadata": {
+    "name": "hipoteca_simulacion_slots_v1",
+    "version": "1.0",
+    "description": "Slots necesarios para simulacion de hipoteca (cliente banco / no cliente)."
+  },
+  "slots": [
+    {
+      "name": "cliente_es_cliente_banco",
+      "type": "boolean",
+      "prompt": "¿Eres cliente del banco? (sí/no)",
+      "required": true,
+      "validation": "is_bool"
+    },
+    {
+      "name": "nombre_completo",
+      "type": "string",
+      "prompt": "Nombre completo (nombre y apellidos)",
+      "required": true,
+      "pre_fill_if_client_data": "full_name",
+      "validation": "min_length:3"
+    },
+    {
+      "name": "dni_nie_nif",
+      "type": "string",
+      "prompt": "DNI / NIE / NIF",
+      "required": true,
+      "pre_fill_if_client_data": "dni",
+      "validation": "dni_format"
+    },
+    {
+      "name": "fecha_nacimiento",
+      "type": "date",
+      "prompt": "Fecha de nacimiento (DD/MM/YYYY)",
+      "required": true,
+      "pre_fill_if_client_data": "birth_date",
+      "validation": "adult_min_age:18"
+    },
+    {
+      "name": "direccion_postal",
+      "type": "string",
+      "prompt": "Dirección postal (calle, número, ciudad, CP)",
+      "required": true,
+      "pre_fill_if_client_data": "address",
+      "validation": "min_length:10"
+    },
+    {
+      "name": "telefono_email",
+      "type": "contact",
+      "prompt": "Teléfono y/o email (para enviar la simulación)",
+      "required": true,
+      "pre_fill_if_client_data": "contact",
+      "validation": "phone_or_email"
+    },
+    {
+      "name": "tipo_vivienda",
+      "type": "enum",
+      "prompt": "Tipo de vivienda: nueva / segunda mano",
+      "required": true,
+      "values": ["nueva", "segunda_mano"]
+    },
+    {
+      "name": "precio_vivienda",
+      "type": "number",
+      "prompt": "Precio de la vivienda en euros",
+      "required": true,
+      "validation": "positive_number"
+    },
+    {
+      "name": "entrada",
+      "type": "number",
+      "prompt": "Entrada disponible en euros",
+      "required": true,
+      "validation": "non_negative_and_less_than_price"
+    },
+    {
+      "name": "importe_a_financiar",
+      "type": "number",
+      "prompt": "Importe a financiar en euros (si no lo sabes, lo calculo = precio - entrada)",
+      "required": false,
+      "auto_compute": "precio_vivienda - entrada",
+      "validation": "positive_number"
+    },
+    {
+      "name": "plazo_anos",
+      "type": "integer",
+      "prompt": "Plazo deseado en años (ej: 20, 25, 30)",
+      "required": true,
+      "validation": "in_list:[10,15,20,25,30,35,40]"
+    },
+    {
+      "name": "tipo_interes",
+      "type": "enum",
+      "prompt": "Tipo de interes: fijo / variable / mixto",
+      "required": true,
+      "values": ["fijo", "variable", "mixto"]
+    },
+    {
+      "name": "tasa_interes_anual",
+      "type": "number",
+      "prompt": "Tasa de interés nominal anual en % (si no la conoces, responde 'no')",
+      "required": false,
+      "validation": "percent_or_none"
+    },
+    {
+      "name": "ingresos_netos_mensuales",
+      "type": "number",
+      "prompt": "Ingresos netos mensuales en euros",
+      "required": false,
+      "pre_fill_if_client_data": "domiciled_payroll",
+      "validation": "non_negative"
+    },
+    {
+      "name": "fuente_ingresos",
+      "type": "enum",
+      "prompt": "Fuente de ingresos: nomina / autonomo / pensión / otras",
+      "required": false,
+      "values": ["nomina", "autonomo", "pension", "otras"]
+    },
+    {
+      "name": "gastos_mensuales_est",
+      "type": "number",
+      "prompt": "Gastos mensuales estimados (otras cuotas, tarjetas, alquiler...)",
+      "required": false,
+      "validation": "non_negative"
+    },
+    {
+      "name": "situacion_laboral",
+      "type": "enum",
+      "prompt": "Situación laboral: indefinido / temporal / autonomo / pensionista / desempleado",
+      "required": false,
+      "values": ["indefinido","temporal","autonomo","pensionista","desempleado"]
+    },
+    {
+      "name": "aportaciones_adicionales",
+      "type": "number",
+      "prompt": "Aportaciones adicionales / ahorros disponibles en euros",
+      "required": false,
+      "validation": "non_negative"
+    },
+    {
+      "name": "avalista",
+      "type": "boolean",
+      "prompt": "¿Tienes avalista o persona que aporte garantía? (sí/no)",
+      "required": false
+    },
+    {
+      "name": "consentimiento_ficheros",
+      "type": "boolean",
+      "prompt": "Doy consentimiento para consultar ficheros de morosos (ASNEF/Experian) y la CIRBE si procede. (sí/no)",
+      "required": true,
+      "validation": "must_be_true_for_credit_check"
+    },
+    {
+      "name": "consentimiento_tratamiento_datos",
+      "type": "boolean",
+      "prompt": "Doy mi consentimiento para el tratamiento de mis datos personales conforme a la política de privacidad. (sí/no)",
+      "required": true,
+      "validation": "must_be_true"
+    }
+  ],
+  "validation_functions": {
+    "is_bool": "value in [true,false,'sí','no','si']",
+    "min_length:3": "len(value.strip()) >= 3",
+    "dni_format": "regex match Spanish DNI/NIE patterns",
+    "adult_min_age:18": "date difference >= 18 years",
+    "phone_or_email": "basic phone or email pattern",
+    "positive_number": "value > 0",
+    "non_negative": "value >= 0",
+    "non_negative_and_less_than_price": "0 <= entrada < precio_vivienda",
+    "percent_or_none": "value is None or (0 <= value <= 100)",
+    "in_list:[10,15,20,25,30,35,40]": "value in [10,15,20,25,30,35,40]",
+    "must_be_true_for_credit_check": "value == true",
+    "must_be_true": "value == true"
+  },
+  "flows": {
+    "default": {
+      "steps": [
+        "cliente_es_cliente_banco",
+        "pre_fill_client_data_if_any",
+        "confirm_pre_filled_items",
+        "collect_missing_slots_in_order",
+        "validate_slots",
+        "request_consent_for_credit_checks",
+        "invoke_credit_checks_and_kcy",
+        "compute_simulation",
+        "show_results_and_options"
+      ]
+    }
+  }
+}

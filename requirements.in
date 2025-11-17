@@ -1,0 +1,26 @@
+# Core
+streamlit>=1.29.0,<2.0
+sqlalchemy>=2.0.29,<3.0
+psycopg2-binary>=2.9.9,<3.0
+pandas>=2.1.4,<3.0
+
+# Vector search / AI
+faiss-cpu>=1.8.0,<2.0
+chromadb>=0.4.23,<0.5
+langchain>=0.1.13,<0.2
+crewai>=0.28.5,<0.29
+ollama>=0.1.8,<0.2
+
+# OCR / PDF
+pytesseract>=0.3.10,<0.4
+pillow>=10.2.0,<11.0
+pdf2image>=1.16.3,<2.0
+PyPDF2>=3.0.1,<4.0
+
+# Other utilities
+python-dotenv>=1.0.0,<2.0
+python-doctr[torch]>=0.8.1,<0.9
+reportlab>=3.6.12,<4.0
+
+# Pydantic compatible con la mayoría
+pydantic>=2.5.1,<3
