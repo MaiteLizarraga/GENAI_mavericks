@@ -1,18 +1,19 @@
-# LangChain core + community (deben tener la MISMA versión)
+# LangChain core + community (MISMA versión)
 langchain==0.2.10
 langchain-community==0.2.10
 
-# HuggingFace + ecosistema actualizado (necesario para Llama 3.2)
-transformers==4.46.2
-huggingface_hub==0.23.4
+# HuggingFace + ecosistema actualizado (Llama 3.2 requiere transformers >= 4.51)
+transformers==4.56.0
+huggingface_hub==0.34.0
 accelerate==0.34.2
 torch==2.2.2
 requests==2.31.0
 
 # Audio: voz
-pyttsx3==2.90
-pyaudio==0.2.13
-vosk==0.3.45
+# pyttsx3==2.90
+# pyaudio==0.2.13
+# vosk==0.3.45
 
 # .env loader
 python-dotenv==1.1.1
+
