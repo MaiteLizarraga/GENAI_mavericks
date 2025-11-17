@@ -127,6 +127,8 @@ pydantic-core==2.41.5
     # via pydantic
 pypiwin32==223
     # via pyttsx3
+python-dotenv==1.1.1
+    # via -r requirements.in
 pyttsx3==2.90
     # via -r requirements.in
 pywin32==311
