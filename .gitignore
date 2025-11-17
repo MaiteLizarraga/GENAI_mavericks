@@ -7,3 +7,5 @@ Reto_2_Mavericks.pptx
 # Ignorar carpeta virtualenv
 sigp_env/
 
+# Ignorar token Hugging Face
+.env
