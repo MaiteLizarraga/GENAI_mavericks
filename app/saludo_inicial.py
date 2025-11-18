@@ -20,7 +20,7 @@ def saludo_inicial():
             **inputs,
             max_new_tokens=50,
             do_sample=True,       # más rápido que greedy
-            temperature=0.7       # para respuestas variadas
+            temperature=0.3       # respuestas menos variadas
         )
 
     generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
