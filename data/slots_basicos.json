@@ -53,13 +53,6 @@
       "validation": "phone_or_email"
     },
     {
-      "name": "tipo_vivienda",
-      "type": "enum",
-      "prompt": "¿Estás buscando una vivienda nueva o de segunda mano?",
-      "required": true,
-      "values": ["nueva", "segunda_mano"]
-    },
-    {
       "name": "precio_vivienda",
       "type": "number",
       "prompt": "¿Cuál es el precio de venta de la vivienda que te gustaría comprar?",
@@ -90,25 +83,11 @@
       "validation": "non_negative"
     },
     {
-      "name": "fuente_ingresos",
-      "type": "enum",
-      "prompt": "¿Cuáles son tus fuentes de ingresos? Por ejemplo, la nómina, autonomos, pensión de algún tipo, otros",
-      "required": false,
-      "values": ["nomina", "autonomo", "pension", "otras"]
-    },
-    {
       "name": "gastos_mensuales_est",
       "type": "number",
       "prompt": "¿Cuáles son tus gastos mensuales estimados (otros créditos como el de coche o al consumo, tarjetas de crédito, alquileres...)?",
       "required": false,
       "validation": "non_negative"
-    },
-    {
-      "name": "situacion_laboral",
-      "type": "enum",
-      "prompt": "¿Cuál es tu situación laboral actual? Por ejemplo: indefinido, temporal, autonomo, pensionista, desempleado",
-      "required": false,
-      "values": ["indefinido","temporal","autonomo","pensionista","desempleado"]
     }
   ],
   "flows": {

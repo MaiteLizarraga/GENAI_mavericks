@@ -70,20 +70,19 @@ def validar_con_modelo(slot, user_input):
         - Si cumple los criterios, devuelve el número tal cual.
         - Si no cumple o es ambiguo, devuelve 'INCOMPLETO'.
         """
-    elif slot["type"] == "email":
-        prompt += """
-        - Valida que la respuesta sea una dirección de correo electrónico válida:
-            1. Contiene exactamente un '@'.
-            2. Tiene al menos un carácter antes del '@'.
-            3. Después del '@', contiene al menos un punto '.' separando el dominio y el TLD.
-            4. Solo se permiten letras, números, guiones (-), guion bajo (_) y puntos (.) en el nombre y dominio.
-            5. No se permiten espacios.
-        - Ejemplo válido: 'usuario@example.com', 'nombre.apellido@empresa.es', 'mliztellez@gmail.co'
-        - Ejemplo NO válido: 'usuario@@example.com', 'usuario@', 'usuario example.com', 'm@g'
-        - Devuelve el email tal cual si cumple los criterios.
-        - Si no cumple o es ambiguo, devuelve 'INCOMPLETO'.
-        """
-    prompt += "\nDevuelve solo el valor limpio o 'INCOMPLETO'."
+    # elif slot["type"] == "email":
+    #     prompt += """
+    #     - Valida que la respuesta sea una dirección de correo electrónico válida:
+    #         1. Contiene exactamente un '@'.
+    #         2. Tiene al menos un carácter antes del '@'.
+    #         4. Solo se permiten letras, números, guiones (-), guion bajo (_) y puntos (.) en el nombre y dominio.
+    #         5. No se permiten espacios.
+    #     - Ejemplo válido: 'usuario@example.com', 'nombre.apellido@empresa.es', 'mliztellez@gmail.co'
+    #     - Ejemplo NO válido: 'usuario@@example.com', 'usuario@', 'usuario example.com', 'm@g'
+    #     - Devuelve el email tal cual si cumple los criterios.
+    #     - Si no cumple o es ambiguo, devuelve 'INCOMPLETO'.
+    #     """
+    # prompt += "\nDevuelve solo el valor limpio o 'INCOMPLETO'."
 
     try:
         inputs = tokenizer.apply_chat_template(

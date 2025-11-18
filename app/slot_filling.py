@@ -8,9 +8,23 @@ def iniciar_slot_filling_json(prompts):
 
     # Conectar SQLite
     conn = sqlite3.connect("clientes.db")
+    conn.row_factory = sqlite3.Row  # <- Devuelve diccionarios
     c = conn.cursor()
-    cols = ", ".join([f"{s['name']} TEXT" for s in slots])
-    c.execute(f"CREATE TABLE IF NOT EXISTS clientes ({cols})")
+
+    # Crear tabla (si quieres tipos correctos, ajusta aquí)
+    c.execute("DROP TABLE IF EXISTS clientes")
+    cols_def = []
+    for s in slots:
+        if s['name'] in ['precio_vivienda', 'entrada', 'importe_a_financiar', 'gastos_mensuales_est', 'ingresos_netos_mensuales', 'plazo_anos', 'tasa_interes_anual',
+                         'ingresos_netos_mensuales', 'gastos_mensuales_est', 'aportaciones_adicionales']:
+            tipo = "REAL"
+        elif s['name'] in ['avalista', 'cliente_es_cliente_banco', 'consentimiento_ficheros',
+                           'consentimiento_tratamiento_datos']:
+            tipo = "INTEGER"  # 0/1 para booleanos
+        else:
+            tipo = "TEXT"
+        cols_def.append(f"{s['name']} {tipo}")
+    c.execute(f"CREATE TABLE IF NOT EXISTS clientes ({', '.join(cols_def)})")
 
     # Iterar sobre slots
     for slot in slots:
@@ -22,21 +36,22 @@ def iniciar_slot_filling_json(prompts):
                 conn.close()
                 return
 
-            # --- Extraer / limpiar respuesta con LLM ---
+            # Validar/limpiar respuesta con LLM
             valor_limpio = validar_con_modelo(slot, user_input)
             if valor_limpio is None:
                 print(f"Agente: No entendí tu respuesta para {slot['name']}, inténtalo de nuevo.")
                 continue
 
-            # --- Guardar dato y prompt ---
             form_data[slot["name"]] = valor_limpio
             prompts.append({"role": "user", "content": f"{slot['name']}: {valor_limpio}"})
-            break  # pasa al siguiente slot solo si fue válido
+            break
 
     # Guardar en SQLite
     cols_str = ", ".join(form_data.keys())
     placeholders = ", ".join(["?"] * len(form_data))
-    c.execute(f"INSERT INTO clientes ({cols_str}) VALUES ({placeholders})", tuple(form_data.values()))
+    # Convertir booleanos a 0/1
+    valores = [1 if v is True else 0 if v is False else v for v in form_data.values()]
+    c.execute(f"INSERT INTO clientes ({cols_str}) VALUES ({placeholders})", tuple(valores))
     conn.commit()
     conn.close()
     print("\n📄 Datos guardados correctamente en la base de datos.")

@@ -27,6 +27,7 @@ model = AutoModelForCausalLM.from_pretrained(
     model_name,
     # token=hf_token,
     device_map="auto",
+    offload_folder="offload",
     torch_dtype="auto"
 )
 
