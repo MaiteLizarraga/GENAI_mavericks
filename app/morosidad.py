@@ -5,7 +5,7 @@ def solicitar_consentimiento_morosos():
     información relacionada con ficheros de morosos.
     Devuelve True si acepta, False si no.
     """
-    print("💬 Antes de continuar, necesitamos tu consentimiento para consultar ficheros de morosos y procesar esos datos según la LOPD/GDPR.")
+    print("También necesitamos tu consentimiento para consultar ficheros de morosos (CIRBE, ASNEF, etc.).")
     
     while True:
         respuesta = input("¿Aceptas? (sí/no): ").strip().lower()
@@ -18,8 +18,8 @@ def solicitar_consentimiento_morosos():
         else:
             print("Por favor, responde 'sí' o 'no'.")
 
-if __name__ == "__main__":
-    if solicitar_consentimiento_morosos():
-        print("Usuario aceptó consultar ficheros de morosos")
-    else:
-        print("Usuario NO aceptó consultar ficheros de morosos")
+# if __name__ == "__main__":
+#     if solicitar_consentimiento_morosos():
+#         print("Usuario aceptó consultar ficheros de morosos")
+#     else:
+#         print("Usuario NO aceptó consultar ficheros de morosos")

@@ -1,6 +1,6 @@
 # gdpr.py
 def solicitar_consentimiento_gdpr():
-    print("💬 Antes de continuar, necesitamos tu consentimiento para el tratamiento de datos (GDPR/LOPD).")
+    print("Antes de continuar, necesitamos tu consentimiento para el tratamiento de datos (GDPR/LOPD).")
     while True:
         respuesta = input("¿Aceptas? (sí/no): ").strip().lower()
         if respuesta in ["sí", "si", "s", "yes"]:
@@ -12,8 +12,8 @@ def solicitar_consentimiento_gdpr():
         else:
             print("Por favor, responde 'sí' o 'no'.")
 
-if __name__ == "__main__":
-    if solicitar_consentimiento_gdpr():
-        print("Usuario aceptó GDPR")
-    else:
-        print("Usuario NO aceptó GDPR")
+# if __name__ == "__main__":
+#     if solicitar_consentimiento_gdpr():
+#         print("Usuario aceptó GDPR")
+#     else:
+#         print("Usuario NO aceptó GDPR")
