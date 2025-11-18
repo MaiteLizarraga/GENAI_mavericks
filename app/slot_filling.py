@@ -54,4 +54,4 @@ def iniciar_slot_filling_json(prompts):
     c.execute(f"INSERT INTO clientes ({cols_str}) VALUES ({placeholders})", tuple(valores))
     conn.commit()
     conn.close()
-    print("\n📄 Datos guardados correctamente en la base de datos.")
+    print("\nDatos guardados correctamente en la base de datos.")

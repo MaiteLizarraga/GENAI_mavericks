@@ -26,7 +26,7 @@ def main():
     resultado = calculo_hipotecario()
     
     # Mostrar resultados principales
-    print("\n📊 Resultados de la hipoteca:")
+    print("\nResultados de la hipoteca:")
     print(f"Cliente: {resultado['cliente']} ({resultado['dni_nie']})")
     print(f"Importe a financiar: {resultado['importe_financiar']:.2f} €")
     print(f"Cuota mensual tipo variable ({resultado['tasa_variable']:.2f}%): {resultado['cuota_variable']:.2f} €")
@@ -36,7 +36,7 @@ def main():
     # Mostrar tabla de amortización anual
     # ---------------------------
     for tipo, tabla in [("Variable", resultado["tabla_variable"]), ("Fijo", resultado["tabla_fija"])]:
-        print(f"\n📄 Tabla de amortización anual ({tipo}):")
+        print(f"\nTabla de amortización anual ({tipo}):")
         
         # Convertir a DataFrame si no lo es
         if not isinstance(tabla, pd.DataFrame):

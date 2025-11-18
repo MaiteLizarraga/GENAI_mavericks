@@ -153,13 +153,3 @@ def calculo_hipotecario():
         "tabla_variable": tabla_var,
         "tabla_fija": tabla_fix
     }
-
-
-# -------------------------------
-# Ejemplo de uso
-# -------------------------------
-if __name__ == "__main__":
-    resultado = calculo_hipotecario()
-    print(f"Cliente: {resultado['cliente']} ({resultado['dni_nie']})")
-    print(f"Cuota mensual variable: {resultado['cuota_variable']:.2f} € (Plazo: {resultado['plazo_variable']} años)")
-    print(f"Cuota mensual fija: {resultado['cuota_fija']:.2f} € (Plazo: {resultado['plazo_fijo']} años)")
