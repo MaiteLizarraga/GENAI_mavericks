@@ -97,7 +97,8 @@ def calculo_hipotecario():
     # -------------------------------
     precio = parse_float(cliente["precio_vivienda"])
     entrada = parse_float(cliente["entrada"])
-    importe_financiar = max(0, precio - entrada)
+    # importe_financiar = max(0, precio - entrada)
+    importe_financiar = parse_float(cliente["importe_a_financiar"])
     ingresos = parse_float(cliente["ingresos_netos_mensuales"])
     gastos = parse_float(cliente["gastos_mensuales_est"])
 
@@ -119,7 +120,7 @@ def calculo_hipotecario():
     # -------------------------------
     # Calcular cuota máxima asumible
     # -------------------------------
-    cuota_max = max(100, (ingresos - gastos) * 0.4)  # 40% de ingresos netos disponibles
+    cuota_max = max(100, (ingresos - gastos) * 0.33)  # 33% de ingresos netos disponibles
 
     # -------------------------------
     # Calcular plazos según cuota máxima
