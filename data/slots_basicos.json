@@ -8,7 +8,7 @@
     {
       "name": "cliente_es_cliente_banco",
       "type": "boolean",
-      "prompt": "¿Eres cliente del banco? (sí/no)",
+      "prompt": "Pregúntale al cliente si es cliente del banco",
       "required": true,
       "validation": "is_bool"
     },
@@ -55,21 +55,21 @@
     {
       "name": "precio_vivienda",
       "type": "number",
-      "prompt": "¿Cuál es el precio de venta de la vivienda que te gustaría comprar?",
+      "prompt": "¿cuánto vale la vivienda que se quiere comprar con esta hipoteca?",
       "required": true,
       "validation": "positive_number"
     },
     {
       "name": "entrada",
       "type": "number",
-      "prompt": "¿Cuál es la entrada que tienes disponible en euros?",
+      "prompt": "cuando se compra una vivienda se suele dar una cantidad de dinero por adelantado. Es cantidad la tiene que tener el cliente, no la presta el banco. Normalmente es el 20% del importe total de compra de la vivienda. Pregúntale al cliente cuánto va a aportar él de su bolsillo.",
       "required": true,
       "validation": "non_negative_and_less_than_price"
     },
     {
       "name": "importe_a_financiar",
       "type": "number",
-      "prompt": "¿Sabes cuál es el importe que te gustaría financiar? (si no lo sabes, lo calculo = precio - entrada)",
+      "prompt": "¿qué cantidad de dinero o importe quiere financiar?",
       "required": false,
       "auto_compute": "precio_vivienda - entrada",
       "validation": "positive_number"
@@ -77,7 +77,7 @@
     {
       "name": "ingresos_netos_mensuales",
       "type": "number",
-      "prompt": "¿Cuáles son tus ingresos netos mensuales en euros? Si recibes 14 pagas, especifícalo en tu respuesta.",
+      "prompt": "¿Cuáles son tus ingresos brutos mensuales en euros en 12 pagas?",
       "required": false,
       "pre_fill_if_client_data": "domiciled_payroll",
       "validation": "non_negative"

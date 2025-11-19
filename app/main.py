@@ -1,36 +1,33 @@
-import time
-from saludo_inicial import saludo_inicial
-from gdpr import solicitar_consentimiento_gdpr
-from morosidad import solicitar_consentimiento_morosos
-from slot_filling import iniciar_slot_filling_json
+from saludo_lopd_morosidad import saludo_inicial
+from slot_filling import obtener_datos_hipoteca
+from db_new_clients import init_db
 from calculo_hipoteca import calculo_hipotecario
 import pandas as pd
+import json
+from model_loader import llm
 
 def main():
     # Saludo inicial
-    prompts = saludo_inicial()
+    saludo_inicial()
     
-    time.sleep(1.5)
+    init_db()
 
-    # Solicitar consentimiento GDPR
-    if not solicitar_consentimiento_gdpr():
-        return  # Termina el programa si el usuario no consiente
-    
-    if not solicitar_consentimiento_morosos():
-        return # Termina el programa si el usuario no consiente
+    # Slot filling / preguntas del modelo
+    with open("../data/slots_basicos.json", "r", encoding="utf-8") as f:
+        config = json.load(f)
 
-    # Slot filling / preguntas guiadas
-    iniciar_slot_filling_json(prompts)
-    
-    # Calculo de la hipoteca
-    resultado = calculo_hipotecario()
+    slots = config["slots"]
+    cliente_id, datos = obtener_datos_hipoteca(slots)
+    resultado = calculo_hipotecario(cliente_id, datos)
     
     # Mostrar resultados principales
     print("\nResultados de la hipoteca:")
     print(f"Cliente: {resultado['cliente']} ({resultado['dni_nie']})")
     print(f"Importe a financiar: {resultado['importe_financiar']:.2f} €")
     print(f"Cuota mensual tipo variable ({resultado['tasa_variable']:.2f}%): {resultado['cuota_variable']:.2f} €")
+    print(f"Tiempo en meses (variable): {resultado['n_meses_variable']} meses")
     print(f"Cuota mensual tipo fijo ({resultado['tasa_fija']:.2f}%): {resultado['cuota_fija']:.2f} €")
+    print(f"Tiempo en meses (fijo): {resultado['n_meses_fijo']} meses")
 
     # ---------------------------
     # Mostrar tabla de amortización anual
@@ -60,6 +57,16 @@ def main():
         # Imprimir
         print(resumen_anual.to_string(index=False, float_format="{:.2f}".format))
 
+
+    while True:
+        user_input = input("\nTú: ")
+        if user_input.lower() in ["salir", "exit", "quit"]:
+            print("Agente: ¡Hasta luego!")
+            break
+
+        # Llamada al modelo Groq
+        respuesta = llm.invoke(user_input)
+        print("Agente:", respuesta.content.strip())
 
 if __name__ == "__main__":
     main()

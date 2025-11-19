@@ -4,7 +4,7 @@ import pandas as pd
 import re
 import math
 
-def calculo_hipotecario():
+def calculo_hipotecario(cliente_id, datos):
     """
     Calcula la hipoteca para el último cliente añadido en la base de datos.
     Determina automáticamente el plazo según ingresos, gastos, importe a financiar y tipo de interés.
@@ -23,30 +23,59 @@ def calculo_hipotecario():
         denominator = (1 + r) ** n - 1
         return numerator / denominator
 
-    def generar_tabla_amortizacion(P: float, annual_rate_percent: float, years: int, start_date: date = None) -> pd.DataFrame:
+    def generar_tabla_amortizacion(P: float, annual_rate_percent: float, years: int, tipo="fijo", start_date: date = None) -> pd.DataFrame:
+        """
+        Genera una tabla de amortización mensual.
+        - tipo="fijo": cuota mensual constante.
+        - tipo="variable": cuota recalculada cada mes según saldo y tasa.
+        """
         if start_date is None:
             start_date = date.today()
+
         r = annual_rate_percent / 100.0 / 12.0
         n = years * 12
-        cuota = cuota_mensual(P, annual_rate_percent, years)
         saldo = P
         rows = []
+
+        if tipo == "fijo":
+            # cuota fija exacta usando fórmula estándar
+            if r == 0:
+                cuota = P / n
+            else:
+                cuota = P * r * (1 + r) ** n / ((1 + r) ** n - 1)
+
         for i in range(1, n + 1):
+            if tipo == "variable":
+                # recalcular cuota según saldo restante
+                meses_restantes = n - i + 1
+                if r == 0:
+                    cuota = saldo / meses_restantes
+                else:
+                    cuota = saldo * r * (1 + r) ** meses_restantes / ((1 + r) ** meses_restantes - 1)
+
             interes = saldo * r
             amortizacion = cuota - interes
-            saldo_nuevo = max(0.0, saldo - amortizacion)
-            fecha = start_date + pd.Timedelta(days=30 * i)
+            saldo -= amortizacion
+
+            # Ajuste final para saldo=0 en hipoteca fija
+            if tipo == "fijo" and i == n:
+                amortizacion += saldo  # ajustar la diferencia residual
+                cuota += saldo
+                saldo = 0.0
+
+            fecha = start_date + pd.DateOffset(months=i)
             rows.append({
                 "mes": i,
-                "fecha": fecha.isoformat(),
+                "fecha": fecha.strftime("%Y-%m-%d"),
                 "cuota": round(cuota, 2),
                 "interes": round(interes, 2),
                 "amortizacion": round(amortizacion, 2),
-                "saldo": round(saldo_nuevo, 2)
+                "saldo": round(saldo, 2)
             })
-            saldo = saldo_nuevo
+
             if saldo <= 0:
                 break
+
         return pd.DataFrame(rows)
 
     def parse_float(valor, default=0.0):
@@ -76,16 +105,20 @@ def calculo_hipotecario():
             if C_max <= P * r:
                 n_meses = 1
             else:
-                n_meses = math.log(C_max / (C_max - P * r)) / math.log(1 + r)
-        return max(1, round(n_meses / 12))
+                n_meses = math.log(C_max / (C_max - P * r)) / math.log(1 + r)  
+        años = max(1, round(n_meses / 12.0))
+        return años, float(n_meses)
 
     # -------------------------------
     # Leer último cliente añadido
     # -------------------------------
-    conn = sqlite3.connect("clientes.db")
+    conn = sqlite3.connect("hipotecas.db")
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
-    c.execute("SELECT * FROM clientes ORDER BY rowid DESC LIMIT 1")
+    if cliente_id:
+        c.execute("SELECT * FROM clientes WHERE id=? LIMIT 1", (cliente_id,))
+    else:
+        c.execute("SELECT * FROM clientes ORDER BY rowid DESC LIMIT 1")
     cliente = c.fetchone()
     conn.close()
 
@@ -97,8 +130,7 @@ def calculo_hipotecario():
     # -------------------------------
     precio = parse_float(cliente["precio_vivienda"])
     entrada = parse_float(cliente["entrada"])
-    # importe_financiar = max(0, precio - entrada)
-    importe_financiar = parse_float(cliente["importe_a_financiar"])
+    importe_financiar = parse_float(cliente["importe_a_financiar"]) or max(0, precio - entrada)
     ingresos = parse_float(cliente["ingresos_netos_mensuales"])
     gastos = parse_float(cliente["gastos_mensuales_est"])
 
@@ -125,8 +157,8 @@ def calculo_hipotecario():
     # -------------------------------
     # Calcular plazos según cuota máxima
     # -------------------------------
-    plazo_var = calcular_plazo(importe_financiar, cuota_max, tasa_variable)
-    plazo_fix = calcular_plazo(importe_financiar, cuota_max, tasa_fija)
+    plazo_var, n_meses_var = calcular_plazo(importe_financiar, cuota_max, tasa_variable)
+    plazo_fix, n_meses_fix = calcular_plazo(importe_financiar, cuota_max, tasa_fija)
 
     # -------------------------------
     # Calcular cuotas y tablas
@@ -152,5 +184,7 @@ def calculo_hipotecario():
         "cuota_variable": cuota_var,
         "cuota_fija": cuota_fix,
         "tabla_variable": tabla_var,
-        "tabla_fija": tabla_fix
+        "tabla_fija": tabla_fix,
+        "n_meses_variable": n_meses_var,
+        "n_meses_fijo": n_meses_fix
     }
